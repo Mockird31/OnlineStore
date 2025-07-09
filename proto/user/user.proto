@@ -1,0 +1,40 @@
+syntax = "proto3";
+
+option go_package = "./user";
+
+import "google/protobuf/empty.proto";
+
+package user;
+
+service UserService {
+    rpc SignupUser(RegisterData) returns (User);
+    rpc LoginUser(LoginData) returns (User);
+    rpc DeleteUser(DeleteData) returns (google.protobuf.Empty);
+}
+
+message RegisterData {
+    string username = 1;
+    string email = 2;
+    string password = 3;
+    string confirm_password = 4;
+}
+
+message LoginData {
+    string username = 1;
+    string email = 2;
+    string password = 3;
+}
+
+message DeleteData {
+    string username = 1;
+    string email = 2;
+    string password = 3;
+    string confirm_password = 4;
+}
+
+message User {
+    int64 id = 1;
+    string username = 2;
+    string email = 3;
+}
+

@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+option go_package = "./auth";
+
+import "google/protobuf/empty.proto";
+
+package auth;
+
+service AuthService {
+    rpc CreateSession(UserID) returns (SessionID);
+    rpc GetUserIDBySessionID(SessionID) returns (UserID);
+    rpc DeleteSession(SessionID) returns (google.protobuf.Empty);
+}
+
+message UserID {
+    int64 id = 1;
+}
+
+message SessionID {
+    string id = 1;
+}

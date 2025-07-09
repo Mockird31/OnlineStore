@@ -1,0 +1,42 @@
+services:
+  redis:
+    image: 'redis'
+    container_name: redis
+    restart: always
+    ports:
+      - '6379:6379'
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 10s
+      timeout: 10s
+      retries: 5
+    tty: true
+  
+  api:
+    build:
+      context: ./deploy/images/api
+      dockerfile: Dockerfile
+    container_name: api
+    restart: always
+    ports:
+      - '8080:8080'
+    environment:
+      AUTH_SERVICE_HOST: auth-grpc
+    depends_on:
+      - auth-grpc
+    tty: true
+
+  auth-grpc:
+    build: 
+      context: ..
+      dockerfile: deploy/images/auth/Dockerfile
+    environment:
+      REDIS_PORT: ${REDIS_PORT}
+      REDIS_HOST: redis
+    container_name: auth-grpc
+    restart: always
+    depends_on:
+      - redis
+    ports:
+      - '5004:5004'
+    tty: true
