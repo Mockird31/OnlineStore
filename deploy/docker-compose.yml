@@ -38,5 +38,37 @@ services:
     depends_on:
       - redis
     ports:
-      - '5004:5004'
+      - '5001:5001'
+    tty: true
+
+  postgres:
+    build:
+      context: ./deploy/images/postgres
+      dockerfile: Dockerfile
+    container_name: postgres
+    restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_PORT: ${POSTGRES_PORT}
+      POSTGRES_HOST: ${POSTGRES_HOST}
+    ports:
+      - '${POSTGRES_PORT}:${POSTGRES_PORT}'
+    volumes:
+      - 'pgdata:/var/lib/postgresql/data'
+      - './_postgres:/docker-entrypoint-initdb.d'
+    command: ["postgres", "-c", "config_file=/etc/postgresql/postgresql.conf"]
+    tty: true
+
+  user-grpc:
+    build: 
+      context: ..
+      dockerfile: deploy/images/user/Dockerfile
+    container_name: user-grpc
+    restart: always
+    depends_on:
+      - postgres
+    ports:
+      - '5002:5002'
     tty: true

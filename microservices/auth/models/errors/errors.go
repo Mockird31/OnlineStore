@@ -22,7 +22,7 @@ func (e *AuthError) GRPCStatus() *status.Status {
 
 func NewGenerateSessionError(format string, args ...interface{}) *AuthError {
 	return &AuthError{
-		Code:    codes.Internal,
+		Code:    codes.Unavailable,
 		Message: fmt.Sprintf(format, args...),
 	}
 }

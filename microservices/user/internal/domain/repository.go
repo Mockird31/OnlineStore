@@ -7,5 +7,7 @@ import (
 )
 
 type Repository interface {
-	SignupUser(ctx context.Context, regData *model.RegisterData) *model.User
+	SignupUser(ctx context.Context, username, email, passwordHash string) (*model.User, error)
+	CheckUsernameUnique(ctx context.Context, username string) (bool, error) 
+	CheckEmailUnique(ctx context.Context, email string) (bool, error)
 }
