@@ -4,7 +4,7 @@ services:
     container_name: redis
     restart: always
     ports:
-      - '6379:6379'
+      - '${REDIS_PORT}:${REDIS_PORT}'
     healthcheck:
       test: ['CMD', 'redis-cli', 'ping']
       interval: 10s
@@ -14,16 +14,19 @@ services:
   
   api:
     build:
-      context: ./deploy/images/api
-      dockerfile: Dockerfile
+      context: ..
+      dockerfile: deploy/images/api/Dockerfile
     container_name: api
     restart: always
     ports:
       - '8080:8080'
     environment:
-      AUTH_SERVICE_HOST: auth-grpc
+      AUTH_SERVICE_HOST: auth-grpс
+      USER_SERVICE_HOST: user-grpc
     depends_on:
       - auth-grpc
+      - user-grpc
+      - postgres
     tty: true
 
   auth-grpc:
@@ -42,9 +45,7 @@ services:
     tty: true
 
   postgres:
-    build:
-      context: ./deploy/images/postgres
-      dockerfile: Dockerfile
+    image: 'postgres:16'
     container_name: postgres
     restart: always
     environment:
@@ -58,13 +59,26 @@ services:
     volumes:
       - 'pgdata:/var/lib/postgresql/data'
       - './_postgres:/docker-entrypoint-initdb.d'
+      - './images/postgres/postgresql.conf:/etc/postgresql/postgresql.conf'
     command: ["postgres", "-c", "config_file=/etc/postgresql/postgresql.conf"]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
     tty: true
 
   user-grpc:
     build: 
       context: ..
       dockerfile: deploy/images/user/Dockerfile
+    environment:
+      POSTGRES_PORT: ${POSTGRES_PORT}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_HOST: postgres
     container_name: user-grpc
     restart: always
     depends_on:
@@ -72,3 +86,7 @@ services:
     ports:
       - '5002:5002'
     tty: true
+
+volumes:
+  pgdata:
+    driver: local

@@ -14,11 +14,20 @@ func RegisterDataProtoToRegisterData(regDataProto *userProto.RegisterData) *Regi
 	return regData
 }
 
+func LoginDataProtoToLoginData(loginDataProto *userProto.LoginData) *LoginData {
+	logData := &LoginData{
+		Username: loginDataProto.Username,
+		Email:    loginDataProto.Email,
+		Password: loginDataProto.Password,
+	}
+	return logData
+}
+
 func UserToUserProto(user *User) *userProto.User {
 	userProto := &userProto.User{
 		Username: user.Username,
-		Email: user.Email,
-		Id: user.Id,
+		Email:    user.Email,
+		Id:       user.Id,
 	}
 	return userProto
 }

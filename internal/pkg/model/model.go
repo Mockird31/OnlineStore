@@ -1,19 +1,25 @@
 package model
 
 type RegisterData struct {
-	Username        string `validate:"min=5,max=30"`
-	Email           string
-	Password        string
-	ConfirmPassword string
+	Username        string `json:"username"`
+	Email           string `json:"email"`
+	Password        string `json:"password"`
+	ConfirmPassword string `json:"confirm_password"`
+}
+
+type LoginData struct {
+	Username string `json:"username"`
+	Email    string `json:"email"`
+	Password string `json:"password"`
 }
 
 type User struct {
-	Id       int64
-	Username string
-	Email    string
+	Id       int64  `json:"-"`
+	Username string `json:"username"`
+	Email    string `json:"email"`
 }
 
 type APIResponse struct {
-	Status int
-	Body   interface{}
+	Status int         `json:"status" example:"200" description:"HTTP status code"`
+	Body   interface{} `json:"body" description:"Response data"`
 }

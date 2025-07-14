@@ -4,7 +4,7 @@ import (
 	"net/http"
 
 	authProto "github.com/Mockird31/OnlineStore/gen/auth"
-	ctxWorker "github.com/Mockird31/OnlineStore/internal/pkg/helpers/ctxExtractor"
+	ctxWorker "github.com/Mockird31/OnlineStore/internal/pkg/helpers/ctxWorker"
 	model "github.com/Mockird31/OnlineStore/internal/pkg/model"
 )
 

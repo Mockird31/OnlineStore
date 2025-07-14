@@ -30,6 +30,14 @@ func RegisterDataToProto(regData *RegisterData) *userProto.RegisterData {
 	}
 }
 
+func LoginDataToProto(logData *LoginData) *userProto.LoginData {
+	return &userProto.LoginData{
+		Username: logData.Username,
+		Email:    logData.Email,
+		Password: logData.Password,
+	}
+}
+
 func UserFromProto(user *userProto.User) *User {
 	return &User{
 		Id:       user.Id,

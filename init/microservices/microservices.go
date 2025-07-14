@@ -14,6 +14,7 @@ import (
 
 type Clients struct {
 	AuthClient *grpc.ClientConn
+	UserClient *grpc.ClientConn
 }
 
 func requestIdUnaryClientInterceptor(ctx context.Context, method string, req, reply interface{}, cc *grpc.ClientConn, invoker grpc.UnaryInvoker, opts ...grpc.CallOption) error {
@@ -24,13 +25,20 @@ func requestIdUnaryClientInterceptor(ctx context.Context, method string, req, re
 	return invoker(metadata.NewOutgoingContext(ctx, md), method, req, reply, cc, opts...)
 }
 
-func InitMicroservices(cfg *config.Config, logger *zap.SugaredLogger) (*Clients, error) {
-	authAddress := fmt.Sprintf("%s:%d", cfg.Services.AuthService.Host, cfg.Services.AuthService.Port)
+func InitMicroservices(cfg *config.Services, logger *zap.SugaredLogger) (*Clients, error) {
+	authAddress := fmt.Sprintf("%s:%d", cfg.AuthService.Host, cfg.AuthService.Port)
 	authClient, err := grpc.NewClient(authAddress, grpc.WithTransportCredentials(insecure.NewCredentials()), grpc.WithUnaryInterceptor(requestIdUnaryClientInterceptor))
+	if err != nil {
+		return nil, err
+	}
+
+	userAddress := fmt.Sprintf("%s:%d", cfg.UserService.Host, cfg.UserService.Port)
+	userClient, err := grpc.NewClient(userAddress, grpc.WithTransportCredentials(insecure.NewCredentials()), grpc.WithUnaryInterceptor(requestIdUnaryClientInterceptor))
 	if err != nil {
 		return nil, err
 	}
 	return &Clients{
 		AuthClient: authClient,
+		UserClient: userClient,
 	}, nil
 }

@@ -14,6 +14,10 @@ var (
 	ErrGetSession      = errors.New("failed to get session")
 	ErrParseRedisValue = errors.New("failed to parse redis return value")
 	ErrDeleteSession   = errors.New("failed to delete session")
+	
+	ErrDatabaseUser    = errors.New("failed to make query to db")
+	ErrNotUnique       = errors.New("data not unique")
+	ErrCreateSalt      = errors.New("failed to generate salt")
 )
 
 func HandleAuthGRPCError(err error) error {
@@ -49,6 +53,28 @@ func HandleAuthGRPCError(err error) error {
 		}
 	case codes.InvalidArgument:
 		return ErrParseRedisValue
+	default:
+		return err
+	}
+}
+
+func HandleUserGRPCError(err error) error {
+	if err == nil {
+		return nil
+	}
+
+	st, ok := status.FromError(err)
+	if !ok {
+		return err
+	}
+
+	switch st.Code() {
+	case codes.Unavailable:
+		return ErrDatabaseUser
+	case codes.InvalidArgument:
+		return ErrNotUnique
+	case codes.FailedPrecondition:
+		return ErrCreateSalt
 	default:
 		return err
 	}

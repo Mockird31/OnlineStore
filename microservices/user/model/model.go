@@ -7,6 +7,12 @@ type RegisterData struct {
 	ConfirmPassword string
 }
 
+type LoginData struct {
+	Username string
+	Email    string
+	Password string
+}
+
 type User struct {
 	Id       int64
 	Username string

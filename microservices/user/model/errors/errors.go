@@ -36,7 +36,21 @@ func NewNotUniqueError(format string, args ...interface{}) *UserError {
 
 func NewCreateSaltError(format string, args ...interface{}) *UserError {
 	return &UserError{
-		Code: codes.FailedPrecondition,
+		Code:    codes.FailedPrecondition,
+		Message: fmt.Sprintf(format, args...),
+	}
+}
+
+func NewUserNotExistError(format string, args ...interface{}) *UserError {
+	return &UserError{
+		Code:    codes.InvalidArgument,
+		Message: fmt.Sprintf(format, args...),
+	}
+}
+
+func NewWrongPasswordError(format string, args ...interface{}) *UserError {
+	return &UserError{
+		Code:    codes.InvalidArgument,
 		Message: fmt.Sprintf(format, args...),
 	}
 }

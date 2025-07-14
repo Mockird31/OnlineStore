@@ -25,3 +25,11 @@ func (s *UserService) SignupUser(ctx context.Context, regData *userProto.Registe
 
 	return model.UserToUserProto(user), nil
 }
+
+func (s *UserService) LoginUser(ctx context.Context, logData *userProto.LoginData) (*userProto.User, error) {
+	user, err := s.userUsecase.LoginUser(ctx, model.LoginDataProtoToLoginData(logData))
+	if err != nil {
+		return nil, err
+	}
+	return model.UserToUserProto(user), nil
+}
