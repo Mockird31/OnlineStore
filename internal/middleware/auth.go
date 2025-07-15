@@ -18,15 +18,15 @@ func IsAuth(authClient authProto.AuthServiceClient) func(http.Handler) http.Hand
 				return
 			}
 
-			userIDProto, err := authClient.GetUserIDBySessionID(ctx, model.StringToSessionIDProto(sessionCookie.Value))
+			userProto, err := authClient.GetUserBySessionID(ctx, model.StringToSessionIDProto(sessionCookie.Value))
 			if err != nil {
 				next.ServeHTTP(w, r)
 				return
 			}
 
-			userID := model.UserIDProtoToInt(userIDProto)
+			user := model.AuthProtoUserToUser(userProto)
 
-			newCtx := ctxWorker.UserIDToContext(ctx, userID)
+			newCtx := ctxWorker.UserToContext(ctx, user)
 
 			next.ServeHTTP(w, r.WithContext(newCtx))
 		})

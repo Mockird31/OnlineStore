@@ -50,6 +50,10 @@ func HashPassword(salt []byte, password string) string {
 func (u *userUsecase) SignupUser(ctx context.Context, regData *model.RegisterData) (*model.User, error) {
 	regData.Username = strings.ToLower(regData.Username)
 	logger := loggerPkg.LoggerFromContext(ctx)
+	if regData.Password != regData.ConfirmPassword {
+		logger.Error("different passwords")
+		return nil, errors.NewWrongPasswordError("wrong password was entered")
+	}
 	isUsernameExist, err := u.userPostgresRepository.CheckUsernameUnique(ctx, regData.Username)
 	if err != nil {
 		return nil, err

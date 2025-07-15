@@ -26,7 +26,7 @@ func (u *userUsecase) SignupUser(ctx context.Context, regData *model.RegisterDat
 		return nil, "", customErrors.HandleUserGRPCError(err)
 	}
 	user := model.UserFromProto(userProto)
-	sessionIDProto, err := u.authClient.CreateSession(ctx, model.IntToUserIDProto(user.Id))
+	sessionIDProto, err := u.authClient.CreateSession(ctx, model.UserToAuthUser(user))
 	if err != nil {
 		return user, "", customErrors.HandleAuthGRPCError(err)
 	}
@@ -40,7 +40,7 @@ func (u *userUsecase) LoginUser(ctx context.Context, logData *model.LoginData) (
 		return nil, "", customErrors.HandleUserGRPCError(err)
 	}
 	user := model.UserFromProto(userProto)
-	sessionIDProto, err := u.authClient.CreateSession(ctx, model.IntToUserIDProto(user.Id))
+	sessionIDProto, err := u.authClient.CreateSession(ctx, model.UserToAuthUser(user))
 	if err != nil {
 		return user, "", customErrors.HandleAuthGRPCError(err)
 	}

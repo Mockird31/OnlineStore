@@ -7,13 +7,15 @@ import "google/protobuf/empty.proto";
 package auth;
 
 service AuthService {
-    rpc CreateSession(UserID) returns (SessionID);
-    rpc GetUserIDBySessionID(SessionID) returns (UserID);
+    rpc CreateSession(User) returns (SessionID);
+    rpc GetUserBySessionID(SessionID) returns (User);
     rpc DeleteSession(SessionID) returns (google.protobuf.Empty);
 }
 
-message UserID {
+message User {
     int64 id = 1;
+    string username = 2;
+    string email = 3;
 }
 
 message SessionID {

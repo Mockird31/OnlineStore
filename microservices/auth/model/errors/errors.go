@@ -61,3 +61,17 @@ func NewDeleteSessionError(format string, args ...interface{}) *AuthError {
 		Message: fmt.Sprintf(format, args...),
 	}
 }
+
+func NewMarshallDataError(format string, args ...interface{}) *AuthError {
+	return &AuthError{
+		Code:    codes.FailedPrecondition,
+		Message: fmt.Sprintf(format, args...),
+	}
+}
+
+func NewUnmarshallDataError(format string, args ...interface{}) *AuthError {
+	return &AuthError{
+		Code:    codes.FailedPrecondition,
+		Message: fmt.Sprintf(format, args...),
+	}
+}

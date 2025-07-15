@@ -5,8 +5,8 @@ import (
 	"time"
 
 	domain "github.com/Mockird31/OnlineStore/microservices/auth/internal/domain"
-	errors "github.com/Mockird31/OnlineStore/microservices/auth/models/errors"
-	"github.com/redis/go-redis/v9"
+	errors "github.com/Mockird31/OnlineStore/microservices/auth/model/errors"
+	"github.com/gomodule/redigo/redis"
 
 	"crypto/rand"
 	"encoding/hex"
@@ -17,10 +17,10 @@ const (
 )
 
 type authRepository struct {
-	redis *redis.Client
+	redis *redis.Pool
 }
 
-func NewAuthRepository(redis *redis.Client) domain.Repository {
+func NewAuthRepository(redis *redis.Pool) domain.Repository {
 	return &authRepository{redis: redis}
 }
 
@@ -33,37 +33,50 @@ func generateSessionID() (string, error) {
 	return hex.EncodeToString(bytes), nil
 }
 
-func (r *authRepository) CreateSession(ctx context.Context, userID int64) (string, error) {
+func (r *authRepository) CreateSession(ctx context.Context, user []byte) (string, error) {
+	conn := r.redis.Get()
+	defer conn.Close()
+
 	sessionID, err := generateSessionID()
 	if err != nil {
 		return "", err
 	}
-	err = r.redis.Set(ctx, sessionID, userID, EXPIRATION).Err()
+	_, err = redis.DoContext(conn, ctx, "SETEX", sessionID, int(EXPIRATION.Seconds()), user)
 	if err != nil {
 		return "", errors.NewSetSessionIDError("failed to set session")
 	}
 	return sessionID, nil
 }
 
-func (r *authRepository) GetUserIDBySessionID(ctx context.Context, sessionID string) (int64, error) {
-	cmd := r.redis.Get(ctx, sessionID)
-	if err := cmd.Err(); err != nil {
-		if err == redis.Nil {
-			return 0, errors.NewFindSessionError("failed to find user id by session id")
-		}
-		return 0, errors.NewGetSessionError("failed to get user id")
-	}
-	userID, err := cmd.Int64()
+func (r *authRepository) GetUserBySessionID(ctx context.Context, sessionID string) ([]byte, error) {
+	conn := r.redis.Get()
+	defer conn.Close()
+
+	userBytes, err := redis.DoContext(conn, ctx, "GET", sessionID)
 	if err != nil {
-		return 0, errors.NewFailToParseRedisIntError("failed to parse redis int")
+		return nil, errors.NewGetSessionError("failed to get user id")
 	}
-	return userID, nil
+
+	if userBytes == nil {
+		return nil, errors.NewFindSessionError("failed to find user id by session id")
+	}
+
+	data, ok := userBytes.([]byte)
+	if !ok {
+		return nil, errors.NewFailToParseRedisIntError("failed to parse redis value")
+	}
+
+	return data, nil
 }
 
 func (r *authRepository) DeleteSession(ctx context.Context, sessionID string) error {
-	err := r.redis.Del(ctx, sessionID).Err()
+	conn := r.redis.Get()
+	defer conn.Close()
+
+	_, err := redis.DoContext(conn, ctx, "DEL", sessionID)
 	if err != nil {
 		return errors.NewDeleteSessionError("failed to delete session")
 	}
+
 	return nil
 }

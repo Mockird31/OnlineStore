@@ -13,6 +13,8 @@ var mapErrorStatus = map[error]int{
 	customErrors.ErrGetSession:      http.StatusBadRequest,
 	customErrors.ErrParseRedisValue: http.StatusServiceUnavailable,
 	customErrors.ErrDeleteSession:   http.StatusServiceUnavailable,
+	customErrors.ErrMarshallData:    http.StatusServiceUnavailable,
+	customErrors.ErrUnmarshallData:  http.StatusServiceUnavailable,
 
 	customErrors.ErrDatabaseUser: http.StatusServiceUnavailable,
 	customErrors.ErrNotUnique:    http.StatusBadRequest,

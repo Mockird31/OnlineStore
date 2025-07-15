@@ -5,8 +5,20 @@ import (
 	userProto "github.com/Mockird31/OnlineStore/gen/user"
 )
 
-func IntToUserIDProto(userID int64) *authProto.UserID {
-	return &authProto.UserID{Id: userID}
+func UserToAuthUser(user *User) *authProto.User {
+	return &authProto.User{
+		Id:       user.Id,
+		Username: user.Username,
+		Email:    user.Email,
+	}
+}
+
+func AuthProtoUserToUser(user *authProto.User) *User {
+	return &User{
+		Id:       user.Id,
+		Username: user.Username,
+		Email:    user.Email,
+	}
 }
 
 func SessionIDProtoToString(sessionID *authProto.SessionID) string {
@@ -15,10 +27,6 @@ func SessionIDProtoToString(sessionID *authProto.SessionID) string {
 
 func StringToSessionIDProto(sessionID string) *authProto.SessionID {
 	return &authProto.SessionID{Id: sessionID}
-}
-
-func UserIDProtoToInt(userID *authProto.UserID) int64 {
-	return userID.Id
 }
 
 func RegisterDataToProto(regData *RegisterData) *userProto.RegisterData {

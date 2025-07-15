@@ -25,3 +25,10 @@ docker-remove:
 	-docker rm -f $$(docker ps -aq)           
 	-docker rmi -f $$(docker images -q)
 	-docker image prune -f
+
+mock-all:
+	mockgen -source=gen/auth/auth_grpc.pb.go -destination=mocks/mock_auth_client.go -package=mocks AuthServiceClient
+	mockgen -source=gen/user/user_grpc.pb.go -destination=mocks/mock_user_client.go -package=mocks UserServiceClient
+
+clean:
+	$(RM) -rf *.out *.html

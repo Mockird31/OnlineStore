@@ -55,10 +55,8 @@ func main() {
 		grpc.UnaryInterceptor(accessInterceptor.UnaryServerInterceptor()),
 	)
 
-	redis, err := redis.InitRedis(cfg)
-	if err != nil {
-		logger.Error("Fail to init redis:", zap.Error(err))
-	}
+	redis := redis.NewRedisPool(cfg.Redis)
+	logger.Info("success connect to redis")
 	defer func() {
 		if err := redis.Close(); err != nil {
 			logger.Error("Error closing redis:", zap.Error(err))

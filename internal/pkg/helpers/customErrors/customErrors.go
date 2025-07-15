@@ -14,10 +14,12 @@ var (
 	ErrGetSession      = errors.New("failed to get session")
 	ErrParseRedisValue = errors.New("failed to parse redis return value")
 	ErrDeleteSession   = errors.New("failed to delete session")
-	
-	ErrDatabaseUser    = errors.New("failed to make query to db")
-	ErrNotUnique       = errors.New("data not unique")
-	ErrCreateSalt      = errors.New("failed to generate salt")
+	ErrMarshallData    = errors.New("failed to marshall data")
+	ErrUnmarshallData  = errors.New("failed to unmarshall data")
+
+	ErrDatabaseUser = errors.New("failed to make query to db")
+	ErrNotUnique    = errors.New("data not unique")
+	ErrCreateSalt   = errors.New("failed to generate salt")
 )
 
 func HandleAuthGRPCError(err error) error {
@@ -48,6 +50,15 @@ func HandleAuthGRPCError(err error) error {
 			return ErrFindSession
 		case "failed to delete session":
 			return ErrDeleteSession
+		default:
+			return err
+		}
+	case codes.FailedPrecondition:
+		switch st.Message() {
+		case "failed to marshall data":
+			return ErrMarshallData
+		case "failed to unmarshall data":
+			return ErrUnmarshallData
 		default:
 			return err
 		}

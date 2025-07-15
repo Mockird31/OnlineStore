@@ -5,7 +5,7 @@ import (
 )
 
 type Repository interface {
-	CreateSession(ctx context.Context, userID int64) (string, error)
-	GetUserIDBySessionID(ctx context.Context, sessionID string) (int64, error)
+	CreateSession(ctx context.Context, user []byte) (string, error)
+	GetUserBySessionID(ctx context.Context, sessionID string) ([]byte, error)
 	DeleteSession(ctx context.Context, sessionID string) error
 }

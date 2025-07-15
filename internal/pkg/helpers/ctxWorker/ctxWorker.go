@@ -1,17 +1,21 @@
 package ctxWorker
 
-import "context"
+import (
+	"context"
 
-type UserIDKey struct{}
+	"github.com/Mockird31/OnlineStore/internal/pkg/model"
+)
 
-func UserIDToContext(ctx context.Context, userID int64) context.Context {
-	return context.WithValue(ctx, UserIDKey{}, userID)
+type UserKey struct{}
+
+func UserToContext(ctx context.Context, user *model.User) context.Context {
+	return context.WithValue(ctx, UserKey{}, user)
 }
 
-func UserIDFromContext(ctx context.Context) (int64, bool) {
-	userID, ok := ctx.Value(UserIDKey{}).(int64)
+func UserFromContext(ctx context.Context) (*model.User, bool) {
+	user, ok := ctx.Value(UserKey{}).(*model.User)
 	if !ok {
-		return 0, false
+		return nil, false
 	}
-	return userID, true
+	return user, true
 }

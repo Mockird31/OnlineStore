@@ -71,7 +71,12 @@ func (u *UserHandler) SignupUser(w http.ResponseWriter, r *http.Request) {
 func (u *UserHandler) LoginUser(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	logger := loggerPkg.LoggerFromContext(ctx)
-
+	user, isAuth := ctxWorker.UserFromContext(ctx)
+	if isAuth {
+		logger.Info("user already auth")
+		json.WriteSuccessResponse(w, http.StatusOK, user, nil)
+		return
+	}
 	logData := &model.LoginData{}
 
 	err := json.ReadJSON(w, r, logData)
@@ -112,7 +117,7 @@ func (u *UserHandler) LoginUser(w http.ResponseWriter, r *http.Request) {
 func (u *UserHandler) LogoutUser(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	logger := loggerPkg.LoggerFromContext(ctx)
-	_, isAuth := ctxWorker.UserIDFromContext(ctx)
+	_, isAuth := ctxWorker.UserFromContext(ctx)
 	if !isAuth {
 		logger.Error("user already doesn't auth")
 		json.WriteErrorResponse(w, http.StatusUnauthorized, "user not auth", nil)
