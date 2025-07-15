@@ -30,5 +30,8 @@ mock-all:
 	mockgen -source=gen/auth/auth_grpc.pb.go -destination=mocks/mock_auth_client.go -package=mocks AuthServiceClient
 	mockgen -source=gen/user/user_grpc.pb.go -destination=mocks/mock_user_client.go -package=mocks UserServiceClient
 
+test:
+	./scripts/test.sh
+
 clean:
-	$(RM) -rf *.out *.html
+	$(RM) -rf *.out *.html *.tmp *.txt
