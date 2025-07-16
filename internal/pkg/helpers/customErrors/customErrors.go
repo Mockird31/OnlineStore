@@ -20,6 +20,9 @@ var (
 	ErrDatabaseUser = errors.New("failed to make query to db")
 	ErrNotUnique    = errors.New("data not unique")
 	ErrCreateSalt   = errors.New("failed to generate salt")
+
+	ErrInvalidOffset = errors.New("entered invalid offset")
+	ErrInvalidLimit  = errors.New("enterd invalid limit")
 )
 
 func HandleAuthGRPCError(err error) error {

@@ -1,7 +1,7 @@
 CREATE TABLE IF NOT EXISTS category (
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    name TEXT NOT NULL UNIQUE,
-    CONSTRAINT name_length CHECK (LENGTH(name) > 0 AND LENGTH(name) <= 50),
+    title TEXT NOT NULL UNIQUE,
+    CONSTRAINT title_length CHECK (LENGTH(title) > 0 AND LENGTH(title) <= 50),
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
@@ -14,7 +14,7 @@ CREATE TABLE IF NOT EXISTS item (
     CONSTRAINT description_length CHECK (LENGTH(description) <= 1000),
     price DECIMAL(10, 2) NOT NULL CHECK (price >= 0),
     image_url TEXT NOT NULL DEFAULT '/default_item_image.png',
-    count INT NOT NULL CHECK (count >= 0),
+    count BIGINT NOT NULL CHECK (count >= 0),
     is_active BOOLEAN NOT NULL DEFAULT TRUE, 
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMP NOT NULL DEFAULT NOW()
