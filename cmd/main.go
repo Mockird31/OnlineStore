@@ -25,6 +25,10 @@ import (
 	categoryHttp "github.com/Mockird31/OnlineStore/internal/pkg/category/delivery/http"
 	categoryRepository "github.com/Mockird31/OnlineStore/internal/pkg/category/repository"
 	categoryUsecase "github.com/Mockird31/OnlineStore/internal/pkg/category/usecase"
+
+	itemHttp "github.com/Mockird31/OnlineStore/internal/pkg/item/delivery/http"
+	itemRepository "github.com/Mockird31/OnlineStore/internal/pkg/item/repository"
+	itemUsecase "github.com/Mockird31/OnlineStore/internal/pkg/item/usecase"
 )
 
 func main() {
@@ -73,6 +77,10 @@ func main() {
 	categoryUsecase := categoryUsecase.NewCategoryUsecase(categoryRepository)
 	categoryHandler := categoryHttp.NewCategoryHandler(categoryUsecase, cfg)
 
+	itemRepository := itemRepository.NewItemPostgresRepository(postgresConn)
+	itemUsecase := itemUsecase.NewItemUsecase(itemRepository)
+	itemHandler := itemHttp.NewItemHandler(itemUsecase, cfg)
+
 	r.Use(middleware.LoggerMiddleware(logger))
 	r.Use(middleware.RequestID)
 	r.Use(middleware.IsAuth(authClient))
@@ -85,6 +93,9 @@ func main() {
 
 	r.HandleFunc("/api/v1/categories", categoryHandler.GetCategories).Methods("GET")
 	r.HandleFunc("/api/v1/categories/{id:[0-9]+}", categoryHandler.GetCategoryByID).Methods("GET")
+
+	r.HandleFunc("/api/v1/items", itemHandler.GetItems).Methods("GET")
+	r.HandleFunc("/api/v1/items/{id:[0-9]+}", itemHandler.GetItem).Methods("GET")
 
 	srv := &http.Server{
 		Addr:    fmt.Sprintf(":%d", cfg.Port),
