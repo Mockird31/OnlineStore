@@ -33,5 +33,11 @@ mock-all:
 test:
 	./scripts/test.sh
 
+kuber-up:
+	cd deploy/ && make kuber-up
+
+kuber-down:
+	cd deploy/ && make kuber-down
+
 clean:
 	$(RM) -rf *.out *.html *.tmp *.txt

@@ -1,0 +1,65 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: user-service
+  namespace: online-store
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: user-service
+  template:
+    metadata:
+      labels:
+        app: user-service
+    spec:
+      containers:
+      - name: user-service
+        image: user-service:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 5002
+        env:
+        - name: POSTGRES_HOST
+          value: "postgres"
+        - name: POSTGRES_PORT
+          value: "5432"
+        - name: POSTGRES_USER
+          valueFrom:
+            secretKeyRef:
+              name: app-secrets
+              key: POSTGRES_USER
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: app-secrets
+              key: POSTGRES_PASSWORD
+        - name: POSTGRES_DB
+          valueFrom:
+            secretKeyRef:
+              name: app-secrets
+              key: POSTGRES_DB
+        volumeMounts:
+        - name: config-volume
+          mountPath: /app/config.yaml
+          subPath: config.yaml
+        resources:
+          limits:
+            memory: "256Mi"
+            cpu: "200m"
+      volumes:
+      - name: config-volume
+        configMap:
+          name: app-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: user-service
+  namespace: online-store
+spec:
+  selector:
+    app: user-service
+  ports:
+  - port: 5002
+    targetPort: 5002

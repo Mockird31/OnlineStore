@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-config
+  namespace: online-store
+data:
+  config.yaml: |
+    port: 8080
+    services:
+      auth_service:
+        port: 5001
+      user_service:
+        port: 5002
+
+    pagination:
+      max_offset: 10000
+      max_limit: 100
+      default_limit: 10
+      default_offset: 0
