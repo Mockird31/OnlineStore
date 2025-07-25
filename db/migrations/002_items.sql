@@ -14,7 +14,7 @@ CREATE TABLE IF NOT EXISTS item (
     CONSTRAINT description_length CHECK (LENGTH(description) <= 1000),
     price DECIMAL(10, 2) NOT NULL CHECK (price >= 0),
     image_url TEXT NOT NULL DEFAULT '/default_item_image.png',
-    count BIGINT NOT NULL CHECK (count >= 0),
+    quantity BIGINT NOT NULL,
     is_active BOOLEAN NOT NULL DEFAULT TRUE, 
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMP NOT NULL DEFAULT NOW()

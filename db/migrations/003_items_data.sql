@@ -9,7 +9,7 @@ INSERT INTO category (title) VALUES
 ('Home'),
 ('Sports');
 
-INSERT INTO item (title, description, price, image_url, count, is_active) VALUES
+INSERT INTO item (title, description, price, image_url, quantity, is_active) VALUES
 ('Smartphone XYZ', 'Latest model with advanced features', 35999, '/default_item_image.png', 50, TRUE),
 ('Laptop ABC', 'High performance laptop for professionals', 89999.99, '/default_item_image.png', 30, TRUE),
 ('Gaming Console', 'Next-gen gaming console with exclusive games', 40000, '/default_item_image.png', 20, TRUE),
